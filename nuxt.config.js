@@ -33,7 +33,8 @@ export default {
 
   styleResources: {
     scss: [
-      '~/assets/scss/*.scss'
+      '~/assets/scss/_setting.scss',
+      '~/assets/scss/base.scss'
     ]
   },
 
