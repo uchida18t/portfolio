@@ -22,5 +22,8 @@ export default {
   align-items: center;
   height: 100%;
   color: #FFFFFF;
+  h1 {
+    font-size: 2.6rem;
+  }
 }
 </style>
