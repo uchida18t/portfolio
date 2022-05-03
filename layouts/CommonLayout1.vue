@@ -22,6 +22,7 @@ export default {
   overflow: hidden;
   &_base {
     height: calc(100vh - $headerHeight);
+    padding: 40px;
     background-color: $black;
     box-shadow: inset -5px 0 14px rgba(#000000, .6);
     transition: all .2s ease-out;

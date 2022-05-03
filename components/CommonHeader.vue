@@ -99,6 +99,7 @@ export default {
       justify-content: space-evenly;
       align-items: center;
       min-height: calc(100vh - $headerHeight);
+      padding: 40px 0;
     }
     &-item {
       margin: auto;
