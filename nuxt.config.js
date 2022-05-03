@@ -10,7 +10,7 @@ export default {
   head: {
     title: 'portfolio',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'ja'
     },
     meta: [
       { charset: 'utf-8' },
@@ -58,8 +58,7 @@ export default {
   ],
 
   optimizedImages: {
-    optimizeImages: true,
-    optimizeImagesInDev: true
+    optimizeImages: true
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

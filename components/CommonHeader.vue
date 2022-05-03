@@ -57,13 +57,11 @@ export default {
       height: 4px;
       background-color: rgba(#FFFFFF, 1);
       border-radius: 40px;
-      transition: all .5s;
       @for $i from 1 through 3 {
         &:nth-of-type(#{$i}) {
-          @if $i == 2 {
-            margin: 5px 0;
-          }
+          transition: all .5s;
           animation: iconLine 2s #{$i * .2}s ease-out infinite;
+          @if $i == 2 { transition: all .2s; margin: 5px 0; }
         }
       }
     }
@@ -116,29 +114,31 @@ export default {
         width: 0;
         height: 0;
         border-radius: 5px;
-        transition: all .2s ease-out;
+        transition: all .3s ease-in;
         pointer-events: none;
       }
       &::before {
         top: 0;
         left: 0;
-        border-top: 1px solid rgba(#1900da, .8);
-        border-left: 1px solid rgba(#1900da, .8);
+        border-top: 2px solid rgba(#1900da, .8);
+        border-left: 2px solid rgba(#1900da, .8);
       }
       &::after {
         bottom: 0;
         right: 0;
-        border-bottom: 1px solid rgba(#1900da, .8);
-        border-right: 1px solid rgba(#1900da, .8);
+        border-bottom: 2px solid rgba(#1900da, .8);
+        border-right: 2px solid rgba(#1900da, .8);
       }
       >a {
         display: block;
         width: 100%;
-        padding: 16px 0;
+        padding: 24px 0;
         text-align: center;
         color: #FFFFFF;
         font-family: 'Jost', sans-serif;
-        transition: all .3s ease-out;
+        font-size: 1.6rem;
+        opacity: .75;
+        transition: transform .3s ease-out, opacity .2s;
       }
       &:hover {
         &::before, &::after {
@@ -146,7 +146,8 @@ export default {
           height: 100%;
         }
         >a {
-          transform: scale(1.08);
+          transform: scale(1.16);
+          opacity: 1;
         }
       }
     }
