@@ -1,6 +1,5 @@
 <template>
   <div id="CommonLayout1" class="layout1">
-    <CommonSwitch />
     <CommonHeader />
     <div class="layout1_base" :class="{ 'layout1_base-slided': isHeaderMenu }">
       <nuxt />
