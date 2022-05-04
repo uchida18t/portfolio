@@ -56,14 +56,15 @@ export default {
     '@aceforth/nuxt-optimized-images'
   ],
 
+  optimizedImages: {
+    optimizeImages: true,
+    optimizeImagesInDev: true
+  },
+
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     ['vue-scrollto/nuxt', { duration: 400, easing: 'ease-in-out' }]
   ],
-
-  optimizedImages: {
-    optimizeImages: true
-  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
