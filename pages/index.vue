@@ -4,6 +4,7 @@
       <ul class="top_container-slides active1">
         <li v-for="item in 4" :key="item" class="top_container-slide already">
           <picture class="top_container-slide-pic">
+            <source :srcset="`/portfolio/images/top/slide${item}.webp`" type="image/webp">
             <img :src="`/portfolio/images/top/slide${item}.jpg`" :alt="`slide${item}`">
           </picture>
         </li>
