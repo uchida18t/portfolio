@@ -9,8 +9,55 @@
           </picture>
         </li>
       </ul>
-      <div class="top_container-text">
-        <h2>ダミーダミー</h2>
+      <div class="top_container-text" :class="`top_container-text${activeSlide}`">
+        <template v-if="activeSlide === 1">
+          <div :class="`top_container-text${activeSlide}-inner`">
+            <h2>Hello.<br>I'm Teruya Uchida.</h2>
+            <nuxt-link to="/contact/" class="btn1">
+              Contact me!
+            </nuxt-link>
+          </div>
+        </template>
+        <template v-if="activeSlide === 2">
+          <div :class="`top_container-text${activeSlide}-inner`">
+            <dl :class="`top_container-text${activeSlide}-grid`">
+              <template v-for="item in about">
+                <dt v-if="item[0].length < 8" :key="item[0]" class="normal jost">
+                  {{ item[0] }}
+                </dt>
+                <dt v-else :key="item[0]" class="smaller jost">
+                  {{ item[0] }}
+                </dt>
+                <dd :key="item[1][0]" :class="{ jost: item[1][1].jost }">
+                  {{ item[1][0] }}
+                </dd>
+              </template>
+            </dl>
+            <nuxt-link to="/about/" class="btn1">
+              Learn more
+            </nuxt-link>
+          </div>
+        </template>
+        <template v-if="activeSlide === 3">
+          <div :class="`top_container-text${activeSlide}-inner`">
+            <ul :class="`top_container-text${activeSlide}-flex`">
+              <li v-for="(item, key) in skill" :key="key" :class="`top_container-text${activeSlide}-item`">
+                <i :class="`${item[0]} ${item[1]}`" />
+              </li>
+            </ul>
+            <nuxt-link to="/skill/" class="btn1">
+              Learn more
+            </nuxt-link>
+          </div>
+        </template>
+        <template v-if="activeSlide === 4">
+          <div :class="`top_container-text${activeSlide}-inner`">
+            <p>Coming Soon</p>
+            <nuxt-link to="/works/" class="btn1">
+              Learn more
+            </nuxt-link>
+          </div>
+        </template>
       </div>
       <div class="top_container-operation">
         <div class="top_container-operation-btn top_container-operation-prev" @click="changeSlide('prev')" />
@@ -33,18 +80,41 @@ export default {
   layout: 'CommonLayout1',
   data () {
     return {
-      activeSlide: 1
+      activeSlide: 1,
+      about: {
+        a1: ['Weight', ['62kg', { jost: true }]],
+        a2: ['Job', ['Frontend Dev.', { jost: true }]],
+        a3: ['Recent Hobby', ['節約、ムーミン', { jost: false }]],
+        a4: ['Weakness', ['朝、寒さ、イケイケの美容院', { jost: false }]]
+      },
+      skill: [
+        ['lab', 'la-html5'], ['lab', 'la-css3-alt'], ['lab', 'la-sass'], ['lab', 'la-js-square'],
+        ['lab', 'la-vuejs'], ['lab', 'la-nuxtjs'], ['lab', 'la-gulp']
+      ]
     }
   },
   computed: mapState([
     'CommonPage'
   ]),
   watch: {
-    activeSlide () {
-      // const parentSlides = document.querySelectorAll('.top_container-slides')
-      // const slides = document.querySelectorAll('.top_container-slide')
-      // const cloneSlide = slides[0].cloneNode(true)
-      // parentSlides.appendChild(cloneSlide)
+    activeSlide (newValue, oldValue) {
+      const parentSlides = document.querySelector('.top_container-slides')
+      const slides = document.querySelectorAll('.top_container-slide')
+      if (
+        newValue === oldValue - 1 ||
+        (oldValue === 1 && newValue === slides.length)
+      ) {
+        const cloneSlide = slides[slides.length - 1].cloneNode(true)
+        parentSlides.removeChild(slides[slides.length - 1])
+        parentSlides.prepend(cloneSlide)
+      } else if (
+        newValue === oldValue + 1 ||
+        (oldValue === slides.length && newValue === 1)
+      ) {
+        const cloneSlide = slides[0].cloneNode(true)
+        parentSlides.removeChild(slides[0])
+        parentSlides.appendChild(cloneSlide)
+      }
     }
   },
   // mounted () {
@@ -85,12 +155,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@keyframes changingToPrev {
-  50%, 100% { transform: translateY(100%); opacity: 0; }
-}
-@keyframes changingToNext {
-  50%, 100% { transform: translateY(-100%); opacity: 0; }
-}
+@import url("https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css");
 .top {
   display: flex;
   flex-flow: row wrap;
@@ -127,6 +192,8 @@ export default {
       left: 0;
       width: 100%;
       height: 100%;
+      user-select: none;
+      pointer-events: none;
       &-pic {
         width: 100%;
         height: 100%;
@@ -158,7 +225,7 @@ export default {
         @for $i from 1 through $length {
           >.top_container-slide:nth-of-type(#{$i}) {
             transform: translate3d(calc(#{$i - 1}px * 8), calc(#{$i - 1}px * 8), 0);
-            opacity: #{1 - ($i * .2)};
+            // opacity: #{1 - ($i * .2)};
             &.already {
               z-index: calc(5 - #{$i});
             }
@@ -167,11 +234,127 @@ export default {
       }
     }
     &-text {
-      align-self: start;
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-self: stretch;
       max-height: 100%;
       position: relative;
-      h2 {
-        font-size: 32px;
+      &1 {
+        align-items: flex-start;
+        padding: 3% 6%;
+        &-inner {
+          // background-color: rgba(#FFFFFF, .1);
+          >h2 {
+            font-family: 'Jost', sans-serif;
+            font-weight: 400;
+            font-size: 6.2rem;
+            letter-spacing: .04em;
+            line-height: 1.2;
+            text-shadow: 6px 6px 12px rgba(#000000, .7);
+            & + .btn1 {
+              @include btn1(220);
+              margin: 56px auto 0;
+            }
+          }
+        }
+      }
+      &2 {
+        align-items: flex-start;
+        padding: 2.5% 6%;
+        &-grid {
+          display: grid;
+          grid-template-columns: max-content 1fr;
+          grid-gap: 24px 68px;
+          gap: 24px 68px;
+          >dt, >dd {
+            align-self: center;
+          }
+          >dt {
+            font-family: 'Jost', sans-serif;
+            font-size: 3.2rem;
+            position: relative;
+            &::before, &::after {
+              content: "";
+              display: block;
+              position: absolute;
+              top: 50%;
+              right: -16px;
+              width: 3px;
+              height: 3px;
+              border-radius: 50%;
+              background-color: #FFFFFF;
+            }
+            &::before {
+              transform: translateY(calc(-50% - 4px));
+            }
+            &::after {
+              transform: translateY(calc(-50% + 4px));
+            }
+            &.smaller {
+              font-size: 2.1rem;
+            }
+          }
+          >dd {
+            font-size: 2.4rem;
+            line-height: 1.4;
+            &.jost {
+              font-family: 'Jost', sans-serif;
+            }
+          }
+          & + .btn1 {
+            @include btn1(180, 18);
+            margin: 40px auto 0;
+          }
+        }
+      }
+      &3 {
+        align-items: center;
+        padding: 2.5% 6%;
+        &-flex {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: space-evenly;
+          align-items: center;
+          margin: auto;
+          max-width: 540px;
+          & + .btn1 {
+            @include btn1(180, 18);
+            margin: 24px auto 0;
+          }
+        }
+        &-item {
+          display: flex;
+          flex-flow: row wrap;
+          justify-content: center;
+          align-items: center;
+          align-self: stretch;
+          transition: transform .2s ease-out;
+          >i {
+            font-size: 11.0rem;
+            &::before {
+              font-size: inherit;
+            }
+            &.la-nuxtjs {
+              font-size: 2.2rem;
+            }
+          }
+          &:hover {
+            transform: scale(1.16);
+          }
+        }
+      }
+      &4 {
+        align-items: center;
+        padding: 2.5% 6%;
+        p {
+          font-family: 'Jost', sans-serif;
+          font-size: 3.2rem;
+          & + .btn1 {
+            @include btn1(180, 18);
+            margin: 36px auto 0;
+          }
+        }
       }
     }
     &-operation {
@@ -227,17 +410,18 @@ export default {
         }
       }
       &-value {
-        color: rgba(#FFFFFF, .5);
         font-family: 'Jost', sans-serif;
         font-weight: 300;
         font-size: 1.6rem;
         letter-spacing: .04em;
         position: relative;
         overflow: hidden;
+        @include blinking;
         >span {
           display: inline-block;
           margin-right: 3px;
           color: rgba(#FFFFFF, .7);
+          font-family: inherit;
           font-weight: 300;
           font-size: 4.0rem;
           &.value-current {

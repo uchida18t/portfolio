@@ -1,6 +1,7 @@
 *, *::before, *::after {
   margin: 0;
   padding: 0;
+  font-family: 'Noto Sans JP', sans-serif;
   font-size: 1rem;
 }
 li {
@@ -8,4 +9,21 @@ li {
 }
 a {
   text-decoration: none;
+}
+
+// line awesome
+.lab {
+  &.la-html5, &.la-css3-alt, &.la-sass, &.la-js-square, &.la-vuejs, &.la-gulp {
+    font-family: 'Line Awesome Brands';
+    &::before {
+      font-family: 'Line Awesome Brands';
+    }
+  }
+  &.la-nuxtjs {
+    font-family: 'Poppins', sans-serif;
+    &::before {
+      content: "NUXTJS";
+      font-family: 'Poppins', sans-serif;
+    }
+  }
 }
