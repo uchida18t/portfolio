@@ -11,7 +11,7 @@
       </ul>
       <div class="top_container-text" :class="`top_container-text${activeSlide}`">
         <template v-if="activeSlide === 1">
-          <div :class="`top_container-text${activeSlide}-inner`">
+          <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <h2>Hello.<br>I'm Teruya Uchida.</h2>
             <nuxt-link to="/contact/" class="btn1">
               Contact me!
@@ -19,7 +19,7 @@
           </div>
         </template>
         <template v-if="activeSlide === 2">
-          <div :class="`top_container-text${activeSlide}-inner`">
+          <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <dl :class="`top_container-text${activeSlide}-grid`">
               <template v-for="item in about">
                 <dt v-if="item[0].length < 8" :key="item[0]" class="normal jost">
@@ -39,7 +39,7 @@
           </div>
         </template>
         <template v-if="activeSlide === 3">
-          <div :class="`top_container-text${activeSlide}-inner`">
+          <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <ul :class="`top_container-text${activeSlide}-flex`">
               <li v-for="(item, key) in skill" :key="key" :class="`top_container-text${activeSlide}-item`">
                 <i :class="`${item[0]} ${item[1]}`" />
@@ -51,7 +51,7 @@
           </div>
         </template>
         <template v-if="activeSlide === 4">
-          <div :class="`top_container-text${activeSlide}-inner`">
+          <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <p>Coming Soon</p>
             <nuxt-link to="/works/" class="btn1">
               Learn more
@@ -97,6 +97,14 @@ export default {
     'CommonPage'
   ]),
   watch: {
+    // isChanging (newValue) {
+    //   const textInner = document.querySelector('.top_container-text-inner')
+    //   if (newValue === true) {
+    //     textInner.classList.add('is_changing')
+    //   } else {
+    //     textInner.classList.remove('is_changing')
+    //   }
+    // },
     activeSlide (newValue, oldValue) {
       const parentSlides = document.querySelector('.top_container-slides')
       const slides = document.querySelectorAll('.top_container-slide')
@@ -118,17 +126,19 @@ export default {
     }
   },
   // mounted () {
-  //   const parentSlides = document.querySelectorAll('.top_container-slides')
-  //   const slides = document.querySelectorAll('.top_container-slide')
-  //   slides.forEach((slide, index) => { })
+  //   // const parentSlides = document.querySelectorAll('.top_container-slides')
+  //   // const slides = document.querySelectorAll('.top_container-slide')
+  //   // slides.forEach((slide, index) => { })
   // },
   methods: {
     changeSlide (dir) {
       const btns = document.querySelectorAll('.top_container-operation-btn')
       const value = document.querySelector('.top_container-operation-value')
+      const textInner = document.querySelector('.top_container-text-inner')
       btns.forEach(btn => btn.classList.add('changing'))
       value.classList.add(`changing_to-${dir}`)
       if (dir === 'prev') {
+        textInner.classList.add('is_changing-prev')
         setTimeout(() => {
           if (this.activeSlide === 1) {
             this.activeSlide = 4
@@ -137,8 +147,10 @@ export default {
           }
           value.classList.remove(`changing_to-${dir}`)
           btns.forEach(btn => btn.classList.remove('changing'))
+          textInner.classList.remove('is_changing-prev')
         }, 300)
       } else if (dir === 'next') {
+        textInner.classList.add('is_changing-next')
         setTimeout(() => {
           if (this.activeSlide < 4) {
             this.activeSlide++
@@ -147,6 +159,7 @@ export default {
           }
           value.classList.remove(`changing_to-${dir}`)
           btns.forEach(btn => btn.classList.remove('changing'))
+          textInner.classList.remove('is_changing-next')
         }, 300)
       }
     }
@@ -354,6 +367,16 @@ export default {
             @include btn1(180, 18);
             margin: 36px auto 0;
           }
+        }
+      }
+      &-inner {
+        opacity: 0;
+        @include slideFadeIn;
+        &.is_changing-prev {
+          @include prevSlideOut;
+        }
+        &.is_changing-next {
+          @include nextSlideOut;
         }
       }
     }
