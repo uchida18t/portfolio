@@ -1,7 +1,7 @@
 <template>
   <section v-cloak id="top" class="top" :class="{ CommonPage }">
     <div class="top_container">
-      <ul class="top_container-slides active1">
+      <ul class="top_container-slides">
         <li v-for="item in 4" :key="item" class="top_container-slide already">
           <picture class="top_container-slide-pic">
             <source :srcset="`/portfolio/images/top/slide${item}.webp`" type="image/webp">
@@ -97,14 +97,6 @@ export default {
     'CommonPage'
   ]),
   watch: {
-    // isChanging (newValue) {
-    //   const textInner = document.querySelector('.top_container-text-inner')
-    //   if (newValue === true) {
-    //     textInner.classList.add('is_changing')
-    //   } else {
-    //     textInner.classList.remove('is_changing')
-    //   }
-    // },
     activeSlide (newValue, oldValue) {
       const parentSlides = document.querySelector('.top_container-slides')
       const slides = document.querySelectorAll('.top_container-slide')
@@ -134,10 +126,12 @@ export default {
     changeSlide (dir) {
       const btns = document.querySelectorAll('.top_container-operation-btn')
       const value = document.querySelector('.top_container-operation-value')
+      const parentSlides = document.querySelector('.top_container-slides')
       const textInner = document.querySelector('.top_container-text-inner')
       btns.forEach(btn => btn.classList.add('changing'))
       value.classList.add(`changing_to-${dir}`)
       if (dir === 'prev') {
+        parentSlides.classList.add('is_changing-prev')
         textInner.classList.add('is_changing-prev')
         setTimeout(() => {
           if (this.activeSlide === 1) {
@@ -147,9 +141,11 @@ export default {
           }
           value.classList.remove(`changing_to-${dir}`)
           btns.forEach(btn => btn.classList.remove('changing'))
+          parentSlides.classList.remove('is_changing-prev')
           textInner.classList.remove('is_changing-prev')
         }, 300)
       } else if (dir === 'next') {
+        parentSlides.classList.add('is_changing-next')
         textInner.classList.add('is_changing-next')
         setTimeout(() => {
           if (this.activeSlide < 4) {
@@ -159,6 +155,7 @@ export default {
           }
           value.classList.remove(`changing_to-${dir}`)
           btns.forEach(btn => btn.classList.remove('changing'))
+          parentSlides.classList.remove('is_changing-next')
           textInner.classList.remove('is_changing-next')
         }, 300)
       }
@@ -217,31 +214,46 @@ export default {
           object-position: center;
         }
       }
+      $slides: slide1, slide2, slide3, slide4;
+      $length: length($slides);
+      @for $i from 1 through $length {
+        &:nth-of-type(#{$i}) {
+          transform: translate3d(calc(#{$i - 1} * 4%), calc(#{$i - 1} * 4%), 0);
+          opacity: calc(1.25 - (#{$i * .25}));
+          &.already {
+            z-index: calc(5 - #{$i});
+          }
+        }
+      }
+      >.top_container-slide:last-of-type {
+        @include slideFadeIn;
+      }
     }
     &-slides {
       $slides: slide1, slide2, slide3, slide4;
       $length: length($slides);
-      // @for $activeNumber from 1 through $length {
-      //   &.active#{$activeNumber} {
-      //     @for $i from 1 through $length {
-      //       >.top_container-slide:nth-of-type(#{$i}) {
-      //         transform: translate3d(calc(#{$i - $activeNumber}px * 8), calc(#{$i - $activeNumber}px * 8), 0);
-      //         opacity: #{1 - ($activeNumber * .2)};
-      //         &.already {
-      //           z-index: calc(5 - #{$activeNumber});
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-      &.active1 {
+      &.is_changing-prev {
+        >.top_container-slide:last-of-type {
+          transition: all .3s;
+          transform: translate3d(12%, 20%, 0) rotate(8deg);
+          opacity: 0;
+        }
         @for $i from 1 through $length {
           >.top_container-slide:nth-of-type(#{$i}) {
-            transform: translate3d(calc(#{$i - 1}px * 8), calc(#{$i - 1}px * 8), 0);
-            // opacity: #{1 - ($i * .2)};
-            &.already {
-              z-index: calc(5 - #{$i});
-            }
+          }
+        }
+      }
+      &.is_changing-next {
+        >.top_container-slide:first-of-type {
+          transition: all .3s;
+          transform: translate3d(-12%, -20%, 0) rotate(-8deg);
+          opacity: 0;
+        }
+        @for $i from 2 through $length {
+          >.top_container-slide:nth-of-type(#{$i}) {
+            transition: all .3s;
+            transform: translate3d(calc(#{$i - 2} * 4%), calc(#{$i - 2} * 4%), 0);
+            opacity: calc(1.5 - (#{$i * .25}));
           }
         }
       }
@@ -371,12 +383,12 @@ export default {
       }
       &-inner {
         opacity: 0;
-        @include slideFadeIn;
+        @include textFadeIn;
         &.is_changing-prev {
-          @include prevSlideOut;
+          @include prevTextOut;
         }
         &.is_changing-next {
-          @include nextSlideOut;
+          @include nextTextOut;
         }
       }
     }

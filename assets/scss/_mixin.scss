@@ -37,26 +37,34 @@
   animation: blinking 2.2s ease-out infinite;
 }
 
-@keyframes prevSlideOut {
-  0% { transform: none; opacity: 1; }
-  75% { opacity: 0; }
-  100% { transform: translateX(-10%); opacity: 0; }
+@keyframes slideFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: .25; }
 }
-@keyframes nextSlideOut {
+@mixin slideFadeIn {
+  animation: slideFadeIn .2s ease-in forwards;
+}
+
+@keyframes prevTextOut {
   0% { transform: none; opacity: 1; }
   75% { opacity: 0; }
   100% { transform: translateX(10%); opacity: 0; }
 }
-@keyframes slideFadeIn {
+@keyframes nextTextOut {
+  0% { transform: none; opacity: 1; }
+  75% { opacity: 0; }
+  100% { transform: translateX(-10%); opacity: 0; }
+}
+@keyframes textFadeIn {
   0% { opacity: 0; }
   100% { opacity: 1; }
 }
-@mixin slideFadeIn {
-  animation: slideFadeIn .3s .4s ease-out forwards;
+@mixin textFadeIn {
+  animation: textFadeIn .3s .4s ease-out forwards;
 }
-@mixin prevSlideOut {
-  animation: prevSlideOut .24s ease-out forwards;
+@mixin prevTextOut {
+  animation: prevTextOut .24s ease-out forwards;
 }
-@mixin nextSlideOut {
-  animation: nextSlideOut .24s ease-out forwards;
+@mixin nextTextOut {
+  animation: nextTextOut .24s ease-out forwards;
 }
