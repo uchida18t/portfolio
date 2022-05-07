@@ -1,6 +1,6 @@
 <template>
-  <div v-cloak id="top" :class="{ CommonPage }">
-    <h1>This is an CONTACT page.</h1>
+  <div v-cloak id="contact" :class="{ CommonPage }">
+    <h1>Coming soon...</h1>
   </div>
 </template>
 
@@ -15,11 +15,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#top {
+#contact {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
   height: 100%;
+  >h1 {
+    color: rgba(#FFFFFF, .8);
+    font-family: 'Jost', sans-serif;
+    font-size: 4.0rem;
+  }
 }
 </style>

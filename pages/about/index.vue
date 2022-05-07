@@ -1,5 +1,5 @@
 <template>
-  <div v-cloak id="top" :class="{ CommonPage }">
+  <div v-cloak id="about" :class="{ CommonPage }">
     <h1>Coming soon...</h1>
   </div>
 </template>
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#top {
+#about {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;

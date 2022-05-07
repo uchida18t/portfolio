@@ -2,10 +2,10 @@
   <section v-cloak id="top" class="top" :class="{ CommonPage }">
     <div class="top_container">
       <ul class="top_container-slides">
-        <li v-for="item in 4" :key="item" class="top_container-slide already">
+        <li v-for="item in allSlides" :key="item" class="top_container-slide">
           <picture class="top_container-slide-pic">
-            <source :srcset="`/portfolio/images/top/slide${item}.webp`" type="image/webp">
-            <img :src="`/portfolio/images/top/slide${item}.jpg`" :alt="`slide${item}`">
+            <source :srcset="`/portfolio/images/top/${item}.webp`" type="image/webp">
+            <img :src="`/portfolio/images/top/${item}.jpg`" :alt="`${item}`">
           </picture>
         </li>
       </ul>
@@ -28,8 +28,8 @@
                 <dt v-else :key="item[0]" class="smaller jost">
                   {{ item[0] }}
                 </dt>
-                <dd :key="item[1][0]" :class="{ jost: item[1][1].jost }">
-                  {{ item[1][0] }}
+                <dd :key="item[1]" :class="{ jost: item[2] }">
+                  {{ item[1] }}
                 </dd>
               </template>
             </dl>
@@ -80,13 +80,14 @@ export default {
   layout: 'CommonLayout1',
   data () {
     return {
+      allSlides: ['slide1', 'slide2', 'slide3', 'slide4'],
       activeSlide: 1,
-      about: {
-        a1: ['Weight', ['62kg', { jost: true }]],
-        a2: ['Job', ['Frontend Dev.', { jost: true }]],
-        a3: ['Recent Hobby', ['節約、ムーミン', { jost: false }]],
-        a4: ['Weakness', ['朝、寒さ、イケイケの美容院', { jost: false }]]
-      },
+      about: [
+        ['Job', 'Frontend Dev.', true],
+        ['Weight', '62kg', true],
+        ['Recent Hobby', '節約、ムーミン、ピアノ', false],
+        ['Weakness', '朝、寒さ、イケイケの美容院', false]
+      ],
       skill: [
         ['lab', 'la-html5'], ['lab', 'la-css3-alt'], ['lab', 'la-sass'], ['lab', 'la-js-square'],
         ['lab', 'la-vuejs'], ['lab', 'la-nuxtjs'], ['lab', 'la-gulp']
@@ -99,64 +100,52 @@ export default {
   watch: {
     activeSlide (newValue, oldValue) {
       const parentSlides = document.querySelector('.top_container-slides')
-      const slides = document.querySelectorAll('.top_container-slide')
       if (
         newValue === oldValue - 1 ||
-        (oldValue === 1 && newValue === slides.length)
+        (oldValue === 1 && newValue === this.allSlides.length)
       ) {
-        const cloneSlide = slides[slides.length - 1].cloneNode(true)
-        parentSlides.removeChild(slides[slides.length - 1])
-        parentSlides.prepend(cloneSlide)
+        // slide -----------------------------------------
+        const addedSlide = this.allSlides[this.allSlides.length - 1]
+        this.allSlides.pop()
+        this.allSlides.unshift(addedSlide)
+        setTimeout(() => {
+          parentSlides.classList.remove('is_changing-prev')
+        }, 300)
       } else if (
         newValue === oldValue + 1 ||
-        (oldValue === slides.length && newValue === 1)
+        (oldValue === this.allSlides.length && newValue === 1)
       ) {
-        const cloneSlide = slides[0].cloneNode(true)
-        parentSlides.removeChild(slides[0])
-        parentSlides.appendChild(cloneSlide)
+        // slide -----------------------------------------
+        const addedSlide = this.allSlides[0]
+        this.allSlides.shift()
+        this.allSlides.push(addedSlide)
+        setTimeout(() => {
+          parentSlides.classList.remove('is_changing-next')
+        }, 300)
       }
     }
   },
-  // mounted () {
-  //   // const parentSlides = document.querySelectorAll('.top_container-slides')
-  //   // const slides = document.querySelectorAll('.top_container-slide')
-  //   // slides.forEach((slide, index) => { })
-  // },
+  mounted () {},
   methods: {
     changeSlide (dir) {
-      const btns = document.querySelectorAll('.top_container-operation-btn')
-      const value = document.querySelector('.top_container-operation-value')
       const parentSlides = document.querySelector('.top_container-slides')
-      const textInner = document.querySelector('.top_container-text-inner')
-      btns.forEach(btn => btn.classList.add('changing'))
-      value.classList.add(`changing_to-${dir}`)
       if (dir === 'prev') {
         parentSlides.classList.add('is_changing-prev')
-        textInner.classList.add('is_changing-prev')
         setTimeout(() => {
           if (this.activeSlide === 1) {
-            this.activeSlide = 4
+            this.activeSlide = this.allSlides.length
           } else {
             this.activeSlide--
           }
-          value.classList.remove(`changing_to-${dir}`)
-          btns.forEach(btn => btn.classList.remove('changing'))
-          parentSlides.classList.remove('is_changing-prev')
-          textInner.classList.remove('is_changing-prev')
         }, 300)
       } else if (dir === 'next') {
         parentSlides.classList.add('is_changing-next')
-        textInner.classList.add('is_changing-next')
         setTimeout(() => {
-          if (this.activeSlide < 4) {
-            this.activeSlide++
-          } else {
+          if (this.activeSlide === this.allSlides.length) {
             this.activeSlide = 1
+          } else {
+            this.activeSlide++
           }
-          value.classList.remove(`changing_to-${dir}`)
-          btns.forEach(btn => btn.classList.remove('changing'))
-          parentSlides.classList.remove('is_changing-next')
-          textInner.classList.remove('is_changing-next')
         }, 300)
       }
     }
@@ -184,6 +173,8 @@ export default {
     width: calc(100% - 60px);
     padding-bottom: 48px;
     position: relative;
+    $slides: slide1, slide2, slide3, slide4;
+    $length: length($slides);
     &-slides {
       align-self: center;
       max-height: 100%;
@@ -202,8 +193,10 @@ export default {
       left: 0;
       width: 100%;
       height: 100%;
+      opacity: 1;
       user-select: none;
       pointer-events: none;
+      transform-style: preserve-3d;
       &-pic {
         width: 100%;
         height: 100%;
@@ -214,46 +207,50 @@ export default {
           object-position: center;
         }
       }
-      $slides: slide1, slide2, slide3, slide4;
-      $length: length($slides);
       @for $i from 1 through $length {
         &:nth-of-type(#{$i}) {
-          transform: translate3d(calc(#{$i - 1} * 4%), calc(#{$i - 1} * 4%), 0);
-          opacity: calc(1.25 - (#{$i * .25}));
-          &.already {
-            z-index: calc(5 - #{$i});
-          }
+          filter: brightness(#{1.26 - ($i * .26)});
+          transform: translate3d(#{($i - 1) * 12}px, #{($i - 1) * 12}px, 0);
+          z-index: #{$length - $i};
         }
-      }
-      >.top_container-slide:last-of-type {
-        @include slideFadeIn;
       }
     }
     &-slides {
-      $slides: slide1, slide2, slide3, slide4;
-      $length: length($slides);
       &.is_changing-prev {
-        >.top_container-slide:last-of-type {
-          transition: all .3s;
-          transform: translate3d(12%, 20%, 0) rotate(8deg);
-          opacity: 0;
-        }
-        @for $i from 1 through $length {
-          >.top_container-slide:nth-of-type(#{$i}) {
+        >.top_container-slide {
+          transition: all .3s ease-out;
+          @each $slide in $slides {
+            $i: index($slides, $slide);
+            @if $i != $length {
+              &:nth-of-type(#{$i}) {
+                filter: brightness(#{1 - $i * .26});
+                transform: translate3d(#{$i * 12}px, #{$i * 12}px, 0);
+              }
+            } @else if $i == $length {
+              &:nth-of-type(#{$i}) {
+                transform: translate3d(#{($i - 1) * 12}px, #{$i * 12}px, 0);
+                opacity: 0;
+              }
+            }
           }
         }
       }
       &.is_changing-next {
-        >.top_container-slide:first-of-type {
-          transition: all .3s;
-          transform: translate3d(-12%, -20%, 0) rotate(-8deg);
-          opacity: 0;
-        }
-        @for $i from 2 through $length {
-          >.top_container-slide:nth-of-type(#{$i}) {
-            transition: all .3s;
-            transform: translate3d(calc(#{$i - 2} * 4%), calc(#{$i - 2} * 4%), 0);
-            opacity: calc(1.5 - (#{$i * .25}));
+        >.top_container-slide {
+          transition: all .3s ease-out;
+          @each $slide in $slides {
+            $i: index($slides, $slide);
+            @if $i != 1 {
+              &:nth-of-type(#{$i}) {
+                filter: brightness(#{1.52 - $i * .26});
+                transform: translate3d(#{($i - 2) * 12}px, #{($i - 2) * 12}px, 0);
+              }
+            } @else if $i == 1 {
+              &:nth-of-type(#{$i}) {
+                transform: translate3d(#{($i - 2) * 12}px, #{($i - 2) * 12}px, 0);
+                opacity: 0;
+              }
+            }
           }
         }
       }

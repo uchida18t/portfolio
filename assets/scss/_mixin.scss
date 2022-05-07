@@ -37,12 +37,15 @@
   animation: blinking 2.2s ease-out infinite;
 }
 
-@keyframes slideFadeIn {
-  0% { opacity: 0; }
-  100% { opacity: .25; }
+@keyframes prevClone {
+  0% {  }
 }
-@mixin slideFadeIn {
-  animation: slideFadeIn .2s ease-in forwards;
+@keyframes nextClone {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@mixin nextClone {
+  animation: nextClone .2s ease-in forwards;
 }
 
 @keyframes prevTextOut {
@@ -60,7 +63,7 @@
   100% { opacity: 1; }
 }
 @mixin textFadeIn {
-  animation: textFadeIn .3s .4s ease-out forwards;
+  animation: textFadeIn 1s .4s ease-out forwards;
 }
 @mixin prevTextOut {
   animation: prevTextOut .24s ease-out forwards;
