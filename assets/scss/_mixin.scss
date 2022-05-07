@@ -1,6 +1,17 @@
 @import '_setting';
 
 // common
+@keyframes cloakIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@mixin cloakIn {
+  opacity: 0;
+  animation: cloakIn .8s .3s ease-out forwards;
+  &[v-cloak] {
+    display: none;
+  }
+}
 @mixin btn1($w, $f: 25) {
   display: block;
   width: #{$w}px;
@@ -35,17 +46,6 @@
 }
 @mixin blinking {
   animation: blinking 2.2s ease-out infinite;
-}
-
-@keyframes prevClone {
-  0% {  }
-}
-@keyframes nextClone {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-@mixin nextClone {
-  animation: nextClone .2s ease-in forwards;
 }
 
 @keyframes prevTextOut {

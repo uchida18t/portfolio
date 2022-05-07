@@ -1,15 +1,15 @@
 <template>
   <section v-cloak id="top" class="top" :class="{ CommonPage }">
     <div class="top_container">
-      <ul class="top_container-slides">
-        <li v-for="item in allSlides" :key="item" class="top_container-slide">
+      <ul id="topSlides" class="top_container-slides">
+        <li v-for="(item, key) in allSlides" :key="key" class="top_container-slide">
           <picture class="top_container-slide-pic">
             <source :srcset="`/portfolio/images/top/${item}.webp`" type="image/webp">
             <img :src="`/portfolio/images/top/${item}.jpg`" :alt="`${item}`">
           </picture>
         </li>
       </ul>
-      <div class="top_container-text" :class="`top_container-text${activeSlide}`">
+      <div id="topTexts" class="top_container-text" :class="`top_container-text${activeSlide}`">
         <template v-if="activeSlide === 1">
           <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <h2>Hello.<br>I'm Teruya Uchida.</h2>
@@ -61,7 +61,7 @@
       </div>
       <div class="top_container-operation">
         <div class="top_container-operation-btn top_container-operation-prev" @click="changeSlide('prev')" />
-        <p class="top_container-operation-value">
+        <p id="operationValue" class="top_container-operation-value">
           <span v-if="activeSlide === 1" class="dummy_value-prev">{{ activeSlide + 3 }}</span>
           <span v-else class="dummy_value-prev">{{ activeSlide - 1 }}</span>
           <span class="value-current">{{ activeSlide }}</span>/4
@@ -99,54 +99,73 @@ export default {
   ]),
   watch: {
     activeSlide (newValue, oldValue) {
-      const parentSlides = document.querySelector('.top_container-slides')
+      const parentSlides = document.getElementById('topSlides')
+      const texts = document.getElementById('topTexts')
+      const operationValue = document.getElementById('operationValue')
       if (
         newValue === oldValue - 1 ||
-        (oldValue === 1 && newValue === this.allSlides.length)
+        (oldValue === 1 && newValue === this.allSlides.length - 2)
       ) {
         // slide -----------------------------------------
-        const addedSlide = this.allSlides[this.allSlides.length - 1]
-        this.allSlides.pop()
-        this.allSlides.unshift(addedSlide)
-        setTimeout(() => {
-          parentSlides.classList.remove('is_changing-prev')
-        }, 300)
+        const cloneAllSlides = this.allSlides
+        const prevCloneSlide = cloneAllSlides[cloneAllSlides.length - 3]
+        cloneAllSlides.pop()
+        cloneAllSlides.unshift(prevCloneSlide)
+        this.allSlides = cloneAllSlides
+        parentSlides.classList.remove('is_changing-prev')
+        texts.classList.remove('is_changing-prev')
+        operationValue.classList.remove('is_changing-prev')
       } else if (
         newValue === oldValue + 1 ||
-        (oldValue === this.allSlides.length && newValue === 1)
+        (oldValue === this.allSlides.length - 2 && newValue === 1)
       ) {
         // slide -----------------------------------------
-        const addedSlide = this.allSlides[0]
-        this.allSlides.shift()
-        this.allSlides.push(addedSlide)
-        setTimeout(() => {
-          parentSlides.classList.remove('is_changing-next')
-        }, 300)
+        const cloneAllSlides = this.allSlides
+        const nextCloneSlide = cloneAllSlides[2]
+        cloneAllSlides.shift()
+        cloneAllSlides.push(nextCloneSlide)
+        this.allSlides = cloneAllSlides
+        parentSlides.classList.remove('is_changing-next')
+        texts.classList.remove('is_changing-next')
+        operationValue.classList.remove('is_changing-next')
       }
     }
   },
-  mounted () {},
+  mounted () {
+    const cloneAllSlides = this.allSlides
+    const prevCloneSlide = this.allSlides[this.allSlides.length - 1]
+    const nextCloneSlide = this.allSlides[0]
+    cloneAllSlides.unshift(prevCloneSlide)
+    cloneAllSlides.push(nextCloneSlide)
+    this.allSlides = cloneAllSlides
+  },
   methods: {
     changeSlide (dir) {
-      const parentSlides = document.querySelector('.top_container-slides')
+      const parentSlides = document.getElementById('topSlides')
+      const texts = document.getElementById('topTexts')
+      const operationValue = document.getElementById('operationValue')
       if (dir === 'prev') {
         parentSlides.classList.add('is_changing-prev')
+        texts.classList.add('is_changing-prev')
+        operationValue.classList.add('is_changing-prev')
         setTimeout(() => {
           if (this.activeSlide === 1) {
-            this.activeSlide = this.allSlides.length
+            this.activeSlide = this.allSlides.length - 2
           } else {
             this.activeSlide--
           }
-        }, 300)
+        }, 400)
       } else if (dir === 'next') {
         parentSlides.classList.add('is_changing-next')
+        texts.classList.add('is_changing-next')
+        operationValue.classList.add('is_changing-next')
         setTimeout(() => {
-          if (this.activeSlide === this.allSlides.length) {
+          if (this.activeSlide === this.allSlides.length - 2) {
             this.activeSlide = 1
           } else {
             this.activeSlide++
           }
-        }, 300)
+        }, 400)
       }
     }
   }
@@ -155,6 +174,9 @@ export default {
 
 <style lang="scss" scoped>
 @import url("https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css");
+#top {
+  @include cloakIn;
+}
 .top {
   display: flex;
   flex-flow: row wrap;
@@ -194,6 +216,7 @@ export default {
       width: 100%;
       height: 100%;
       opacity: 1;
+      box-shadow: 4px 4px 6px rgba(#000000, .5);
       user-select: none;
       pointer-events: none;
       transform-style: preserve-3d;
@@ -207,49 +230,75 @@ export default {
           object-position: center;
         }
       }
-      @for $i from 1 through $length {
+      &:first-of-type {
+        filter: brightness(1);
+        transform: translate3d(-12px, -12px, 0);
+        opacity: 0;
+        z-index: #{$length + 1};
+      }
+      &:last-of-type {
+        filter: brightness(0);
+        transform: translate3d(#{$length * 12}px, #{$length * 12}px, 0);
+        opacity: 0;
+        z-index: 0;
+      }
+      @for $i from 2 through $length + 1 {
         &:nth-of-type(#{$i}) {
-          filter: brightness(#{1.26 - ($i * .26)});
-          transform: translate3d(#{($i - 1) * 12}px, #{($i - 1) * 12}px, 0);
-          z-index: #{$length - $i};
+          filter: brightness(#{1.52 - ($i * .26)});
+          transform: translate3d(#{($i - 2) * 12}px, #{($i - 2) * 12}px, 0);
+          z-index: #{$length + 2 - $i};
         }
       }
     }
     &-slides {
       &.is_changing-prev {
         >.top_container-slide {
-          transition: all .3s ease-out;
-          @each $slide in $slides {
-            $i: index($slides, $slide);
-            @if $i != $length {
-              &:nth-of-type(#{$i}) {
-                filter: brightness(#{1 - $i * .26});
-                transform: translate3d(#{$i * 12}px, #{$i * 12}px, 0);
-              }
-            } @else if $i == $length {
-              &:nth-of-type(#{$i}) {
-                transform: translate3d(#{($i - 1) * 12}px, #{$i * 12}px, 0);
-                opacity: 0;
-              }
+          &:first-of-type {
+            transition: transform .4s ease-out, opacity .4s ease-out;
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
+          }
+          &:nth-of-type(#{$length + 1}) {
+            transition: transform .4s ease-out, opacity .4s ease-out;
+            transform: translate3d(#{$length * 12}px, #{$length * 12}px, 0);
+            opacity: 0;
+          }
+          &:last-of-type {
+            filter: brightness(1);
+            transform: translate3d(-12px, -12px, 0);
+          }
+          @for $i from 2 through $length {
+            &:nth-of-type(#{$i}) {
+              transition: filter .4s ease-out, transform .4s ease-out;
+              filter: brightness(#{1.26 - ($i * .26)});
+              transform: translate3d(#{($i - 1) * 12}px, #{($i - 1) * 12}px, 0);
             }
           }
         }
       }
       &.is_changing-next {
         >.top_container-slide {
-          transition: all .3s ease-out;
-          @each $slide in $slides {
-            $i: index($slides, $slide);
-            @if $i != 1 {
-              &:nth-of-type(#{$i}) {
-                filter: brightness(#{1.52 - $i * .26});
-                transform: translate3d(#{($i - 2) * 12}px, #{($i - 2) * 12}px, 0);
-              }
-            } @else if $i == 1 {
-              &:nth-of-type(#{$i}) {
-                transform: translate3d(#{($i - 2) * 12}px, #{($i - 2) * 12}px, 0);
-                opacity: 0;
-              }
+          &:first-of-type {
+            filter: brightness(0);
+            transform: translate3d(#{$length * 12}px, #{$length * 12}px, 0);
+          }
+          &:nth-of-type(2) {
+            transition: transform .4s ease-out, opacity .4s ease-out;
+            transform-origin: bottom left;
+            transform: translate3d(-12px, -12px, 0) rotate(-3deg);
+            opacity: 0;
+          }
+          &:last-of-type {
+            transition: filter .4s ease-out, transform .4s ease-out, opacity .4s ease-out;
+            filter: brightness(#{1.26 - ($length * .26)});
+            transform: translate3d(#{($length - 1) * 12}px, #{($length - 1) * 12}px, 0);
+            opacity: 1;
+          }
+          @for $i from 3 through $length + 1 {
+            &:nth-of-type(#{$i}) {
+              transition: filter .4s ease-out, transform .4s ease-out;
+              filter: brightness(#{1.78 - ($i * .26)});
+              transform: translate3d(#{($i - 3) * 12}px, #{($i - 3) * 12}px, 0);
             }
           }
         }
@@ -388,6 +437,17 @@ export default {
           @include nextTextOut;
         }
       }
+      // &.is_changing-prev {
+      //   @for $i from 1 through $length {
+      //     >.top_container-text#{i}-inner {
+      //       // @if $i == 1 {
+      //       // }
+      //     }
+      //   }
+      // }
+      // &.is_changing-next {
+
+      // }
     }
     &-operation {
       display: flex;
@@ -471,7 +531,7 @@ export default {
             top: 100%;
           }
         }
-        &.changing_to-prev >span {
+        &.is_changing-prev >span {
           &.value-current {
             transition: all .3s ease-out;
             transform: translateY(100%);
@@ -483,7 +543,7 @@ export default {
             opacity: 1;
           }
         }
-        &.changing_to-next >span {
+        &.is_changing-next >span {
           &.value-current {
             transition: all .3s ease-out;
             transform: translateY(-100%);
