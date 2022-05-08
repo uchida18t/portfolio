@@ -12,6 +12,18 @@
     display: none;
   }
 }
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@mixin fadeIn($duration: .5s, $delay: 0s, $timingFunction: ease-out, $fillMode: forwards) {
+  opacity: 0;
+  animation-name: fadeIn;
+  animation-duration: $duration;
+  animation-delay: $delay;
+  animation-timing-function: $timingFunction;
+  animation-fill-mode: $fillMode;
+}
 @mixin btn1($w, $f: 25) {
   display: block;
   width: #{$w}px;
@@ -27,6 +39,7 @@
   position: relative;
   user-select: none;
   transition: background-color .1s, text-shadow .1s, box-shadow .04s;
+  // @include fadeIn(1s);
   &:hover {
     transition: all .2s ease-out;
     background-color: #4297ff;
@@ -48,26 +61,47 @@
   animation: blinking 2.2s ease-out infinite;
 }
 
-@keyframes prevTextOut {
-  0% { transform: none; opacity: 1; }
-  75% { opacity: 0; }
-  100% { transform: translateX(10%); opacity: 0; }
+@keyframes text1In {
+  0% { transform: none; opacity: 0; }
+  24%, 26% { transform: translateY(-42%); }
+  46%, 48% { transform: translateY(30%); opacity: 3; }
+  64%, 66% { transform: translateY(-20%); }
+  78%, 80% { transform: translateY(12%); }
+  88%, 89% { transform: translateY(-6%); }
+  96%, 97% { transform: translateY(2%); }
+  100% { transform: none; opacity: 1; }
 }
-@keyframes nextTextOut {
-  0% { transform: none; opacity: 1; }
-  75% { opacity: 0; }
-  100% { transform: translateX(-10%); opacity: 0; }
+@mixin text1In {
+  transform: none;
+  opacity: 0;
+  animation-name: text1In;
+  animation-duration: 3s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
 }
-@keyframes textFadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+@keyframes text2In {
+  0% { transform: translateX(24px); opacity: 0; }
+  60% { transform: none; }
+  100% { transform: none; opacity: 1; }
 }
-@mixin textFadeIn {
-  animation: textFadeIn 1s .4s ease-out forwards;
+@mixin text2In {
+  transform: none;
+  opacity: 0;
+  animation-name: text2In;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
 }
-@mixin prevTextOut {
-  animation: prevTextOut .24s ease-out forwards;
+@keyframes text3In {
+  0% { transform: translateY(-20%); opacity: 0; }
+  75% { transform: none; }
+  100% { transform: none; opacity: 1; }
 }
-@mixin nextTextOut {
-  animation: nextTextOut .24s ease-out forwards;
+@mixin text3In {
+  transform: none;
+  opacity: 0;
+  animation-name: text3In;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
 }

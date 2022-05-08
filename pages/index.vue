@@ -12,7 +12,18 @@
       <div id="topTexts" class="top_container-text" :class="`top_container-text${activeSlide}`">
         <template v-if="activeSlide === 1">
           <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
-            <h2>Hello.<br>I'm Teruya Uchida.</h2>
+            <h2>
+              <span
+                v-for="(item, key, index) in mvText1"
+                :key="index"
+                :style="{ animationDelay: `${Math.round(key * .1 * 10) / 10}s` }"
+              >{{ item }}</span><br>
+              <span
+                v-for="(item, key, index) in mvText2"
+                :key="index"
+                :style="{ animationDelay: `${Math.round(key * .1 * 10) / 10}s` }"
+              >{{ item }}</span>
+            </h2>
             <nuxt-link to="/contact/" class="btn1">
               Contact me!
             </nuxt-link>
@@ -21,16 +32,18 @@
         <template v-if="activeSlide === 2">
           <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <dl :class="`top_container-text${activeSlide}-grid`">
-              <template v-for="item in about">
+              <template v-for="(item, key) in about">
                 <dt v-if="item[0].length < 8" :key="item[0]" class="normal jost">
                   {{ item[0] }}
                 </dt>
                 <dt v-else :key="item[0]" class="smaller jost">
                   {{ item[0] }}
                 </dt>
-                <dd :key="item[1]" :class="{ jost: item[2] }">
-                  {{ item[1] }}
-                </dd>
+                <dd
+                  :key="item[1]"
+                  :class="{ jost: item[2] }"
+                  :style="{ animationDelay: `${Math.round((key * .6 + .5) * 10) / 10}s` }"
+                >{{ item[1] }}</dd>
               </template>
             </dl>
             <nuxt-link to="/about/" class="btn1">
@@ -41,7 +54,12 @@
         <template v-if="activeSlide === 3">
           <div class="top_container-text-inner" :class="`top_container-text${activeSlide}-inner`">
             <ul :class="`top_container-text${activeSlide}-flex`">
-              <li v-for="(item, key) in skill" :key="key" :class="`top_container-text${activeSlide}-item`">
+              <li
+                v-for="(item, key) in skill"
+                :key="item[1]"
+                :class="`top_container-text${activeSlide}-item`"
+                :style="{ animationDelay: `${key * .2}s` }"
+              >
                 <i :class="`${item[0]} ${item[1]}`" />
               </li>
             </ul>
@@ -59,9 +77,9 @@
           </div>
         </template>
       </div>
-      <div class="top_container-operation">
+      <div id="topOperation" class="top_container-operation">
         <div class="top_container-operation-btn top_container-operation-prev" @click="changeSlide('prev')" />
-        <p id="operationValue" class="top_container-operation-value">
+        <p class="top_container-operation-value">
           <span v-if="activeSlide === 1" class="dummy_value-prev">{{ activeSlide + 3 }}</span>
           <span v-else class="dummy_value-prev">{{ activeSlide - 1 }}</span>
           <span class="value-current">{{ activeSlide }}</span>/4
@@ -82,6 +100,8 @@ export default {
     return {
       allSlides: ['slide1', 'slide2', 'slide3', 'slide4'],
       activeSlide: 1,
+      mvText1: 'Hello.',
+      mvText2: 'I\'m Teruya Uchida.',
       about: [
         ['Job', 'Frontend Dev.', true],
         ['Weight', '62kg', true],
@@ -101,7 +121,7 @@ export default {
     activeSlide (newValue, oldValue) {
       const parentSlides = document.getElementById('topSlides')
       const texts = document.getElementById('topTexts')
-      const operationValue = document.getElementById('operationValue')
+      const topOperation = document.getElementById('topOperation')
       if (
         newValue === oldValue - 1 ||
         (oldValue === 1 && newValue === this.allSlides.length - 2)
@@ -114,7 +134,7 @@ export default {
         this.allSlides = cloneAllSlides
         parentSlides.classList.remove('is_changing-prev')
         texts.classList.remove('is_changing-prev')
-        operationValue.classList.remove('is_changing-prev')
+        topOperation.classList.remove('is_changing-prev')
       } else if (
         newValue === oldValue + 1 ||
         (oldValue === this.allSlides.length - 2 && newValue === 1)
@@ -127,7 +147,7 @@ export default {
         this.allSlides = cloneAllSlides
         parentSlides.classList.remove('is_changing-next')
         texts.classList.remove('is_changing-next')
-        operationValue.classList.remove('is_changing-next')
+        topOperation.classList.remove('is_changing-next')
       }
     }
   },
@@ -143,11 +163,11 @@ export default {
     changeSlide (dir) {
       const parentSlides = document.getElementById('topSlides')
       const texts = document.getElementById('topTexts')
-      const operationValue = document.getElementById('operationValue')
+      const topOperation = document.getElementById('topOperation')
       if (dir === 'prev') {
         parentSlides.classList.add('is_changing-prev')
         texts.classList.add('is_changing-prev')
-        operationValue.classList.add('is_changing-prev')
+        topOperation.classList.add('is_changing-prev')
         setTimeout(() => {
           if (this.activeSlide === 1) {
             this.activeSlide = this.allSlides.length - 2
@@ -158,7 +178,7 @@ export default {
       } else if (dir === 'next') {
         parentSlides.classList.add('is_changing-next')
         texts.classList.add('is_changing-next')
-        operationValue.classList.add('is_changing-next')
+        topOperation.classList.add('is_changing-next')
         setTimeout(() => {
           if (this.activeSlide === this.allSlides.length - 2) {
             this.activeSlide = 1
@@ -174,6 +194,23 @@ export default {
 
 <style lang="scss" scoped>
 @import url("https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css");
+// line awesome -----------------------
+.lab {
+  &.la-html5, &.la-css3-alt, &.la-sass, &.la-js-square, &.la-vuejs, &.la-gulp {
+    font-family: 'Line Awesome Brands';
+    &::before {
+      font-family: 'Line Awesome Brands';
+    }
+  }
+  &.la-nuxtjs {
+    font-family: 'Poppins', sans-serif;
+    &::before {
+      content: "NUXTJS";
+      font-family: 'Poppins', sans-serif;
+    }
+  }
+}
+// -----------------------
 #top {
   @include cloakIn;
 }
@@ -285,7 +322,7 @@ export default {
           &:nth-of-type(2) {
             transition: transform .4s ease-out, opacity .4s ease-out;
             transform-origin: bottom left;
-            transform: translate3d(-12px, -12px, 0) rotate(-3deg);
+            transform: translate3d(-12px, -12px, 0);
             opacity: 0;
           }
           &:last-of-type {
@@ -311,18 +348,23 @@ export default {
       align-self: stretch;
       max-height: 100%;
       position: relative;
+      transition: opacity 1.2s .2s;
       &1 {
         align-items: flex-start;
         padding: 3% 6%;
         &-inner {
-          // background-color: rgba(#FFFFFF, .1);
           >h2 {
-            font-family: 'Jost', sans-serif;
-            font-weight: 400;
-            font-size: 6.2rem;
-            letter-spacing: .04em;
-            line-height: 1.2;
-            text-shadow: 6px 6px 12px rgba(#000000, .7);
+            >span {
+              display: inline-block;
+              white-space: pre;
+              font-family: 'Jost', sans-serif;
+              font-weight: 400;
+              font-size: 6.2rem;
+              letter-spacing: .04em;
+              line-height: 1.2;
+              text-shadow: 6px 6px 12px rgba(#000000, .7);
+              @include text1In;
+            }
             & + .btn1 {
               @include btn1(220);
               margin: 56px auto 0;
@@ -369,6 +411,7 @@ export default {
           >dd {
             font-size: 2.4rem;
             line-height: 1.4;
+            @include text2In;
             &.jost {
               font-family: 'Jost', sans-serif;
             }
@@ -401,6 +444,7 @@ export default {
           align-items: center;
           align-self: stretch;
           transition: transform .2s ease-out;
+          @include text3In;
           >i {
             font-size: 11.0rem;
             &::before {
@@ -427,27 +471,22 @@ export default {
           }
         }
       }
-      &-inner {
+      &.is_changing-prev {
         opacity: 0;
-        @include textFadeIn;
-        &.is_changing-prev {
-          @include prevTextOut;
-        }
-        &.is_changing-next {
-          @include nextTextOut;
+        transition: opacity .35s;
+        >.top_container-text-inner {
+          transition: transform .35s;
+          transform: translateX(8%);
         }
       }
-      // &.is_changing-prev {
-      //   @for $i from 1 through $length {
-      //     >.top_container-text#{i}-inner {
-      //       // @if $i == 1 {
-      //       // }
-      //     }
-      //   }
-      // }
-      // &.is_changing-next {
-
-      // }
+      &.is_changing-next {
+        opacity: 0;
+        transition: opacity .3s;
+        >.top_container-text-inner {
+          transition: transform .3s;
+          transform: translateX(-8%);
+        }
+      }
     }
     &-operation {
       display: flex;
@@ -465,6 +504,7 @@ export default {
         height: calc(100% - 10px);
         position: relative;
         cursor: pointer;
+        user-select: none;
         &::before {
           content: "";
           display: block;
@@ -480,9 +520,6 @@ export default {
         &:hover::before {
           border-top: 2px solid rgba(#FFFFFF, 1);
           border-left: 2px solid rgba(#FFFFFF, 1);
-        }
-        &.changing {
-          pointer-events: none;
         }
       }
       &-prev {
@@ -531,29 +568,37 @@ export default {
             top: 100%;
           }
         }
-        &.is_changing-prev >span {
-          &.value-current {
-            transition: all .3s ease-out;
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          &.dummy_value-prev {
-            transition: all .3s ease-out;
-            transform: translateY(100%);
-            opacity: 1;
-          }
+      }
+      &.is_changing-prev {
+        cursor: pointer;
+        >.top_container-operation-btn {
+          pointer-events: none;
         }
-        &.is_changing-next >span {
-          &.value-current {
-            transition: all .3s ease-out;
-            transform: translateY(-100%);
-            opacity: 0;
-          }
-          &.dummy_value-next {
-            transition: all .3s ease-out;
-            transform: translateY(-100%);
-            opacity: 1;
-          }
+        .value-current {
+          transition: all .3s ease-out;
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        .dummy_value-prev {
+          transition: all .3s ease-out;
+          transform: translateY(100%);
+          opacity: 1;
+        }
+      }
+      &.is_changing-next {
+        cursor: pointer;
+        >.top_container-operation-btn {
+          pointer-events: none;
+        }
+        .value-current {
+          transition: all .3s ease-out;
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        .dummy_value-next {
+          transition: all .3s ease-out;
+          transform: translateY(-100%);
+          opacity: 1;
         }
       }
     }
